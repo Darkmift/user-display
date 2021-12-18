@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Text from "components/Text";
 import Spinner from "components/Spinner";
 import CheckBox from "components/CheckBox";
@@ -11,7 +11,8 @@ const UserList = ({
   isLoading,
   countries,
   toggleCountry,
-  toggleFavorite
+  toggleFavorite,
+  onInfiniteScroll
 }) => {
 
   const [hoveredUserId, setHoveredUserId] = useState();
@@ -22,6 +23,18 @@ const UserList = ({
 
   const handleMouseLeave = () => {
     setHoveredUserId();
+  };
+
+  const listInnerRef = useRef();
+
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      if (scrollTop + clientHeight === scrollHeight) {
+        console.log("reached bottom");
+        if (onInfiniteScroll) onInfiniteScroll()
+      }
+    }
   };
 
   return (
@@ -44,7 +57,10 @@ const UserList = ({
           )
         })}
       </S.Filters>
-      <S.List>
+      <S.List
+        onScroll={onScroll}
+        ref={listInnerRef}
+      >
         {users.map((user, index) => {
           return (
             <S.User

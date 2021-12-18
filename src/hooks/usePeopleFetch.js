@@ -53,18 +53,44 @@ export const usePeopleFetch = () => {
 
   }, [favorites, users, countries]);
 
-  async function fetchUsers() {
-    if (preventFetch) {
-      console.log('no need on favorite page')
-      return
-    }
+  async function apiCall() {
     try {
+
       const apiUrl = `https://randomuser.me/api/?nat=${countries?.join(',')}&results=25&page=1`;
       setIsLoading(true);
       const response = await axios.get(apiUrl);
       setIsLoading(false);
 
       let users = response.data.results
+      return users;
+
+    } catch (error) {
+      console.error("🚀 ~ file: usePeopleFetch.js ~ line 60 ~ apiCall ~ error", error)
+      return []
+    }
+  }
+
+  async function fetchMoreUsers() {
+    if (preventFetch) {
+      console.log('no need on favorite page')
+      return
+    }
+    try {
+      const users = await apiCall();
+      setUsers(userList => deepClone(userList).concat(users));
+
+    } catch (error) {
+      console.error("🚀 ~ file: usePeopleFetch.js ~ line 22 ~ fetchUsers ~ error", error)
+    }
+  }
+
+  async function fetchUsers() {
+    if (preventFetch) {
+      console.log('no need on favorite page')
+      return
+    }
+    try {
+      const users = await apiCall();
       setUsers(users);
 
     } catch (error) {
@@ -105,5 +131,5 @@ export const usePeopleFetch = () => {
 
 
 
-  return { users, filteredList, favorites, isLoading, fetchUsers, countries, toggleCountry, toggleFavorite };
+  return { users, filteredList, favorites, isLoading, fetchMoreUsers, countries, toggleCountry, toggleFavorite };
 };

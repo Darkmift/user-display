@@ -5,7 +5,7 @@ import { usePeopleFetch } from "hooks";
 import * as S from "./style";
 
 const Home = () => {
-  const { users, isLoading, countries, filteredList, toggleCountry, toggleFavorite } = usePeopleFetch();
+  const { users, isLoading, countries, filteredList, fetchMoreUsers, toggleCountry, toggleFavorite } = usePeopleFetch();
 
   return (
     <S.Home>
@@ -21,6 +21,7 @@ const Home = () => {
           countries={countries}
           toggleCountry={toggleCountry}
           toggleFavorite={toggleFavorite}
+          onInfiniteScroll={fetchMoreUsers}
         />
       </S.Content>
     </S.Home>
