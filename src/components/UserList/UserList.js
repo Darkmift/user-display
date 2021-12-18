@@ -65,7 +65,7 @@ const UserList = ({
                   {user?.location.city} {user?.location.country}
                 </Text>
               </S.UserInfo>
-              <S.IconButtonWrapper isVisible={index === hoveredUserId}>
+              <S.IconButtonWrapper isVisible={user.isFavorite || index === hoveredUserId} onClick={() => toggleFavorite(user?.email)}>
                 <IconButton>
                   <FavoriteIcon color="error" />
                 </IconButton>
