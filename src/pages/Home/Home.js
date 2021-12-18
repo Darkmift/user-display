@@ -5,7 +5,7 @@ import { usePeopleFetch } from "hooks";
 import * as S from "./style";
 
 const Home = () => {
-  const { users, isLoading } = usePeopleFetch();
+  const { users, isLoading, countries, toggleCountry, toggleFavorite } = usePeopleFetch();
 
   return (
     <S.Home>
@@ -15,7 +15,13 @@ const Home = () => {
             PplFinder
           </Text>
         </S.Header>
-        <UserList users={users} isLoading={isLoading} />
+        <UserList
+          users={users}
+          isLoading={isLoading}
+          countries={countries}
+          toggleCountry={toggleCountry}
+          toggleFavorite={toggleFavorite}
+        />
       </S.Content>
     </S.Home>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Text from "components/Text";
 import Spinner from "components/Spinner";
 import CheckBox from "components/CheckBox";
@@ -6,7 +6,14 @@ import IconButton from "@material-ui/core/IconButton";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import * as S from "./style";
 
-const UserList = ({ users, isLoading }) => {
+const UserList = ({
+  users,
+  isLoading,
+  countries,
+  toggleCountry,
+  toggleFavorite
+}) => {
+
   const [hoveredUserId, setHoveredUserId] = useState();
 
   const handleMouseEnter = (index) => {
@@ -20,10 +27,22 @@ const UserList = ({ users, isLoading }) => {
   return (
     <S.UserList>
       <S.Filters>
-        <CheckBox value="BR" label="Brazil" />
-        <CheckBox value="AU" label="Australia" />
-        <CheckBox value="CA" label="Canada" />
-        <CheckBox value="DE" label="Germany" />
+        {[{ cCode: 'BR', name: 'Brazil' },
+        { cCode: 'AU', name: 'Australia' },
+        { cCode: 'CA', name: 'Canada' },
+        { cCode: 'DE', name: 'Germany' },
+        { cCode: 'NL', name: 'NetherLand' }
+        ].map((country, i) => {
+
+          return (
+            <CheckBox
+              key={i}
+              value={country.cCode}
+              isChecked={countries.includes(country.cCode)}
+              label={country.name}
+              onChange={() => toggleCountry(country.cCode)} />
+          )
+        })}
       </S.Filters>
       <S.List>
         {users.map((user, index) => {
