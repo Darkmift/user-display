@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -10,6 +12,14 @@ const NavBar = () => {
     setValue(newValue);
   };
 
+  const location = useLocation();
+
+
+
+  useEffect(() => {
+    setValue(['/', '/favorites'].indexOf(location.pathname))
+  }, [location])
+
   return (
     <AppBar position="static" color="transparent" style={{ position: "fixed", top: 0 }}>
       <Tabs
@@ -19,8 +29,8 @@ const NavBar = () => {
         indicatorColor="primary"
         textColor="primary"
       >
-        <Tab label="Home" index={0} />
-        <Tab label="Favorites" index={1} />
+        <Tab label="Home" index={0} component={Link} to="/" />
+        <Tab label="Favorites" index={1} component={Link} to="/favorites" />
       </Tabs>
     </AppBar>
   );

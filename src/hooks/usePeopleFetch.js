@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { storeToLocalStorage, retrieveFromLocalStorage, deepClone } from "../utils"
 
@@ -6,11 +7,18 @@ export const usePeopleFetch = () => {
   const [users, setUsers] = useState([]);
   const [countries, setCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [favorites, setFavorites] = useState([])
-  const [filteredList, setFilteredList] = useState([])
+  const [favorites, setFavorites] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+  const [preventFetch, setPreventFetch] = useState(false)
 
   const FAVORITE_LS_KEY = 'favorite-users'
   const COUNTRIES_LS_KEY = 'countries'
+
+  useEffect(() => {
+    const path = window.location.hash.replace('#', '')
+    console.log("🚀 ~ file: usePeopleFetch.js ~ line 19 ~ useEffect ~ path", path)
+    setPreventFetch(path != '/')
+  }, [window.location.hash])
 
   // fetch from LS
   useEffect(() => {
@@ -29,7 +37,6 @@ export const usePeopleFetch = () => {
   // update LS favorites on change
   useEffect(() => {
     storeToLocalStorage(FAVORITE_LS_KEY, favorites)
-    console.log("🚀 ~ file: usePeopleFetch.js ~ line 28 ~ useEffect ~ favorites", { users, favorites })
   }, [favorites]);
 
 
@@ -47,6 +54,10 @@ export const usePeopleFetch = () => {
   }, [favorites, users, countries]);
 
   async function fetchUsers() {
+    if (preventFetch) {
+      console.log('no need on favorite page')
+      return
+    }
     try {
       const apiUrl = `https://randomuser.me/api/?nat=${countries?.join(',')}&results=25&page=1`;
       setIsLoading(true);
@@ -65,21 +76,17 @@ export const usePeopleFetch = () => {
 
     let countryList = deepClone(countries)
     if (countryList.includes(country)) {
-      console.log("🚀 ~ file: usePeopleFetch.js ~ line 49 ~ toggleCountry ~ country", country)
       countryList = countryList.filter(c => c != country)
     } else {
       countryList.push(country)
-      console.log("🚀 ~ file: usePeopleFetch.js ~ line 53 ~ toggleCountry ~ country", country)
     }
     setCountries(countryList)
   }
 
   const toggleFavorite = (userEmail) => {
-    console.log("🚀 ~ file: usePeopleFetch.js ~ line 59 ~ toggleFavorite ~ userEmail", userEmail)
     let userList = deepClone(users)
     let newFavoriteList = deepClone(favorites)
     let user = userList.find(user => user.email === userEmail) || newFavoriteList.find(u => u.email === userEmail)
-    console.log("🚀 ~ file: usePeopleFetch.js ~ line 63 ~ toggleFavorite ~ user", user)
     user.isFavorite = !user.isFavorite;
 
     if (!user.isFavorite) {
